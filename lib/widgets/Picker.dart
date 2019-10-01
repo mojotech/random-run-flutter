@@ -8,7 +8,9 @@ class Picker extends StatefulWidget {
 
 class _PickerState extends State<Picker> {
   int _currentWholeValue = 1;
+  int _currentDecimalValue = 1;
   NumberPicker wholeNumberPicker;
+  NumberPicker decimalNumberPicker;
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +18,16 @@ class _PickerState extends State<Picker> {
     return new Center(
       child: new Container(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            wholeNumberPicker,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                wholeNumberPicker,
+                decimalNumberPicker,
+              ],
+            ),
+            new Text(
+                'Number picker value: $_currentWholeValue.$_currentDecimalValue')
           ],
         ),
       ),
@@ -31,6 +40,12 @@ class _PickerState extends State<Picker> {
       minValue: 0,
       maxValue: 100,
       onChanged: (value) => setState(() => _currentWholeValue = value),
+    );
+    decimalNumberPicker = new NumberPicker.integer(
+      initialValue: _currentDecimalValue,
+      minValue: 0,
+      maxValue: 9,
+      onChanged: (value) => setState(() => _currentDecimalValue = value),
     );
   }
 }
