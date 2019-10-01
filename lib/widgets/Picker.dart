@@ -12,6 +12,12 @@ class _PickerState extends State<Picker> {
   NumberPicker _wholeNumberPicker;
   NumberPicker _decimalNumberPicker;
 
+  Widget _dot = new Container(
+    width: 5.0,
+    height: 5.0,
+    decoration: new BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+  );
+
   @override
   Widget build(BuildContext context) {
     _initializePickers();
@@ -21,7 +27,7 @@ class _PickerState extends State<Picker> {
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [_wholeNumberPicker, _decimalNumberPicker],
+              children: [_wholeNumberPicker, _dot, _decimalNumberPicker],
             ),
             new Text('Number picker value: $_wholeNumberValue.$_decimalValue')
           ],
