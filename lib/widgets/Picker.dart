@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 class Picker extends StatefulWidget {
   @override
@@ -6,17 +7,30 @@ class Picker extends StatefulWidget {
 }
 
 class _PickerState extends State<Picker> {
+  int _currentWholeValue = 1;
+  NumberPicker wholeNumberPicker;
+
   @override
   Widget build(BuildContext context) {
+    _initializePickers();
     return new Center(
       child: new Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            new Text("Picker"), //TODO: add number picker here
+            wholeNumberPicker,
           ],
         ),
       ),
+    );
+  }
+
+  void _initializePickers() {
+    wholeNumberPicker = new NumberPicker.integer(
+      initialValue: _currentWholeValue,
+      minValue: 0,
+      maxValue: 100,
+      onChanged: (value) => setState(() => _currentWholeValue = value),
     );
   }
 }
