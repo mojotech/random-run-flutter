@@ -29,7 +29,6 @@ class _PickerState extends State<Picker> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [_wholeNumberPicker, _dot, _decimalNumberPicker],
             ),
-            new Text('Number picker value: $_wholeNumberValue.$_decimalValue')
           ],
         ),
       ),
