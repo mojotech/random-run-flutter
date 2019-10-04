@@ -8,11 +8,15 @@ class Picker extends StatefulWidget {
 
 class _PickerState extends State<Picker> {
   int _wholeNumberValue = 1;
-  int _firstDecimalValue = 0;
-  int _secondDecimalValue = 0;
-  NumberPicker wholeNumberPicker;
-  NumberPicker firstDecimalNumberPicker;
-  NumberPicker secondDecimalNumberPicker;
+  int _decimalValue = 0;
+  NumberPicker _wholeNumberPicker;
+  NumberPicker _decimalNumberPicker;
+
+  Widget _dot = new Container(
+    width: 5.0,
+    height: 5.0,
+    decoration: new BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +27,8 @@ class _PickerState extends State<Picker> {
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                wholeNumberPicker,
-                firstDecimalNumberPicker,
-                secondDecimalNumberPicker
-              ],
+              children: [_wholeNumberPicker, _dot, _decimalNumberPicker],
             ),
-            new Text(
-                'Number picker value: $_wholeNumberValue.$_firstDecimalValue$_secondDecimalValue')
           ],
         ),
       ),
@@ -38,23 +36,18 @@ class _PickerState extends State<Picker> {
   }
 
   void _initializePickers() {
-    wholeNumberPicker = new NumberPicker.integer(
+    _wholeNumberPicker = new NumberPicker.integer(
       initialValue: _wholeNumberValue,
       minValue: 0,
       maxValue: 100,
       onChanged: (value) => setState(() => _wholeNumberValue = value),
     );
-    firstDecimalNumberPicker = new NumberPicker.integer(
-      initialValue: _firstDecimalValue,
+    _decimalNumberPicker = new NumberPicker.integer(
+      initialValue: _decimalValue,
       minValue: 0,
-      maxValue: 9,
-      onChanged: (value) => setState(() => _firstDecimalValue = value),
-    );
-    secondDecimalNumberPicker = new NumberPicker.integer(
-      initialValue: _secondDecimalValue,
-      minValue: 0,
-      maxValue: 9,
-      onChanged: (value) => setState(() => _secondDecimalValue = value),
+      maxValue: 75,
+      step: 25,
+      onChanged: (value) => setState(() => _decimalValue = value),
     );
   }
 }
