@@ -4,7 +4,7 @@ Random Run revived with Flutter
 
 ### Design Document
 
-https://www.figma.com/file/2BBMVqkQdfhjSISrbJwdfO/Random-Run?node-id=0%3A1
+[Figma Design](https://www.figma.com/file/2BBMVqkQdfhjSISrbJwdfO/Random-Run?node-id=0%3A1)
 
 ## Getting Started
 
@@ -18,3 +18,12 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## Running the App
+
+Follow the steps [here](https://flutter.dev/docs/get-started/install)
+Get `flutter doctor` to pass all tests (except having a connected device)
+
+For iOS:
+Open the iOS simulator: `open -a Simulator`
+Run the app: `flutter run` from inside the root directory
