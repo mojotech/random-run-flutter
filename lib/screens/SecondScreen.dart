@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:random_run/theme.dart' as T;
 
 class SecondScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       appBar: AppBar(
-        title: Text('Random Run'),
+        title: T.appBar,
+        backgroundColor: T.RandomRunColors.brightPink,
       ),
-      body: Center(child: new Text('Placeholder Second screen')),
+      body: Center(
+        child: Text(
+          'Placeholder Second screen',
+        ),
+      ),
     );
   }
 }
