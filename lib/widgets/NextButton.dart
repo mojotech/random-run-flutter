@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:random_run/theme.dart' as T;
 
 class NextButton extends StatelessWidget {
+  final bool _disabled;
+
+  NextButton({@required bool disabled}) : _disabled = disabled;
+
   @override
   Widget build(BuildContext context) {
     return ButtonTheme(
@@ -20,10 +24,12 @@ class NextButton extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        color: T.RandomRunColors.brightPink,
+        color: _disabled
+            ? T.RandomRunColors.disabled
+            : T.RandomRunColors.brightPink,
         onPressed: () {
           // Navigate to the second screen using a named route.
-          Navigator.pushNamed(context, '/second');
+          return _disabled ? null : Navigator.pushNamed(context, '/second');
         },
       ),
     );

@@ -51,7 +51,7 @@ class FirstScreen extends StatelessWidget {
                   padding: EdgeInsets.only(
                     top: T.Spacing.large,
                   ),
-                  child: NextButton(),
+                  child: NextButton(disabled: pickerState.pickerValue == '0.0'),
                 ),
               ],
             ),
