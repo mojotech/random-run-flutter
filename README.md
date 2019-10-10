@@ -26,4 +26,5 @@ Get `flutter doctor` to pass all tests (except having a connected device)
 
 For iOS:
 Open the iOS simulator: `open -a Simulator`
+Upgrade Google Maps: navigate to the `ios` folder and run `pod update`
 Run the app: `flutter run` from inside the root directory
