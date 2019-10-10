@@ -6,6 +6,7 @@ import 'package:random_run/widgets/Picker.dart';
 import 'package:random_run/widgets/Dropdown.dart';
 import 'package:random_run/widgets/NextButton.dart';
 import 'package:random_run/bloc/change_unit.dart';
+import 'package:random_run/bloc/picker.dart';
 
 class FirstScreen extends StatelessWidget {
   static Color brightPink = T.RandomRunColors.brightPink;
@@ -23,32 +24,39 @@ class FirstScreen extends StatelessWidget {
         title: T.appBar,
         backgroundColor: brightPink,
       ),
-      body: Center(
-        child: Flex(
-          direction: Axis.vertical,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(
-                top: T.Spacing.medium,
-                bottom: T.Spacing.medium,
-              ),
-              child: Text(
-                'How far would you like to run?',
-                style: _howFarStyle,
-              ),
+      body: BlocBuilder<PickerBloc, PickerState>(
+        builder: (context, pickerState) {
+          return Center(
+            child: Flex(
+              direction: Axis.vertical,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: T.Spacing.medium,
+                    bottom: T.Spacing.medium,
+                  ),
+                  child: Text(
+                    'How far would you like to run?',
+                    style: _howFarStyle,
+                  ),
+                ),
+                Picker(
+                  bloc: BlocProvider.of<PickerBloc>(context),
+                  pickerValue: pickerState.pickerValue,
+                ),
+                _dropDown,
+                Container(
+                  padding: EdgeInsets.only(
+                    top: T.Spacing.large,
+                  ),
+                  child: NextButton(),
+                ),
+              ],
             ),
-            Picker(),
-            _dropDown,
-            Container(
-              padding: EdgeInsets.only(
-                top: T.Spacing.large,
-              ),
-              child: NextButton(),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

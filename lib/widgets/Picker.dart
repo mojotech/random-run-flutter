@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:random_run/theme.dart' as T;
+import 'package:bloc/bloc.dart';
+import 'package:random_run/bloc/picker.dart';
 
 class Picker extends StatefulWidget {
+  final int _wholeNumberValue;
+  final int _decimalNumberValue;
+  final Bloc _bloc;
+
+  Picker({@required String pickerValue, @required Bloc bloc})
+      : _wholeNumberValue = int.parse(pickerValue.split('.')[0]),
+        _decimalNumberValue = int.parse(pickerValue.split('.')[1]),
+        _bloc = bloc;
+
   @override
   _PickerState createState() => _PickerState();
 }
 
 class _PickerState extends State<Picker> {
-  int _wholeNumberValue = 1;
-  int _decimalValue = 0;
   NumberPicker _wholeNumberPicker;
   NumberPicker _decimalNumberPicker;
 
@@ -95,17 +104,19 @@ class _PickerState extends State<Picker> {
 
   void _initializePickers() {
     _wholeNumberPicker = NumberPicker.integer(
-      initialValue: _wholeNumberValue,
+      initialValue: widget._wholeNumberValue,
       minValue: 0,
       maxValue: 100,
-      onChanged: (value) => setState(() => _wholeNumberValue = value),
+      onChanged: (value) => widget._bloc.dispatch(PickerChanged(
+          newPickerValue: '$value.${widget._decimalNumberValue}')),
     );
     _decimalNumberPicker = NumberPicker.integer(
-      initialValue: _decimalValue,
+      initialValue: widget._decimalNumberValue,
       minValue: 0,
       maxValue: 9,
       step: 1,
-      onChanged: (value) => setState(() => _decimalValue = value),
+      onChanged: (value) => widget._bloc.dispatch(
+          PickerChanged(newPickerValue: '${widget._wholeNumberValue}.$value')),
     );
   }
 }
