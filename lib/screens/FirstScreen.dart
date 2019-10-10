@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:random_run/theme.dart' as T;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:random_run/widgets/Picker.dart';
 import 'package:random_run/widgets/Dropdown.dart';
 import 'package:random_run/widgets/NextButton.dart';
+import 'package:random_run/bloc/change_unit.dart';
 
 class FirstScreen extends StatelessWidget {
   static Color brightPink = T.RandomRunColors.brightPink;
@@ -38,7 +40,7 @@ class FirstScreen extends StatelessWidget {
               ),
             ),
             Picker(),
-            Dropdown(),
+            _dropDown,
             Container(
               padding: EdgeInsets.only(
                 top: T.Spacing.large,
@@ -50,4 +52,18 @@ class FirstScreen extends StatelessWidget {
       ),
     );
   }
+
+  final Widget _dropDown = BlocBuilder<ChangeUnitBloc, ChangeUnitState>(
+    builder: (context, state) {
+      final dropdownItems = <String>['miles', 'kilometers'];
+      final value = state.dropdownValue;
+      final dropdownBloc = BlocProvider.of<ChangeUnitBloc>(context);
+
+      return Dropdown(
+        selectedValue: value,
+        items: dropdownItems,
+        bloc: dropdownBloc,
+      );
+    },
+  );
 }

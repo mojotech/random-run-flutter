@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:random_run/theme.dart' as T;
+import 'package:bloc/bloc.dart';
+import 'package:random_run/bloc/change_unit.dart';
 
-class Dropdown extends StatefulWidget {
-  @override
-  _DropdownState createState() => _DropdownState();
-}
+class Dropdown extends StatelessWidget {
+  final String _value;
+  final Bloc _bloc;
+  final List<String> _items;
 
-class _DropdownState extends State<Dropdown> {
-  //TODO: need a better way of managing state (like redux).
-  //https://medium.com/flutter-community/let-me-help-you-to-understand-and-choose-a-state-management-solution-for-your-app-9ffeac834ee3
-  String dropdownValue = 'miles';
   static const Color grayPink = T.RandomRunColors.grayPink;
   static const Color brightPink = T.RandomRunColors.brightPink;
+
+  Dropdown({
+    @required String selectedValue,
+    @required List<String> items,
+    @required Bloc bloc,
+  })  : _value = selectedValue,
+        _bloc = bloc,
+        _items = items;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +43,7 @@ class _DropdownState extends State<Dropdown> {
           child: ButtonTheme(
             alignedDropdown: true,
             child: DropdownButton<String>(
-              value: dropdownValue,
+              value: _value,
               icon: Icon(Icons.arrow_downward),
               iconEnabledColor: brightPink,
               iconSize: 25,
@@ -48,12 +54,9 @@ class _DropdownState extends State<Dropdown> {
                 fontWeight: FontWeight.w400,
               ),
               onChanged: (String newValue) {
-                setState(() {
-                  dropdownValue = newValue;
-                });
+                _bloc.dispatch(DropdownChanged(newValue: newValue));
               },
-              items: <String>['miles', 'kilometers']
-                  .map<DropdownMenuItem<String>>((String value) {
+              items: _items.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Center(
