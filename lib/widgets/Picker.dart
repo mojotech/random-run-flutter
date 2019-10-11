@@ -65,40 +65,36 @@ class _PickerState extends State<Picker> {
   Widget build(BuildContext context) {
     _initializePickers();
     final theme = Theme.of(context);
-    return Column(
-      children: <Widget>[
-        Container(
-          width: T.Spacing.xxlarge,
-          height: T.Spacing.xlarge,
-          decoration: _boxOutline,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Theme(
-                data: theme.copyWith(
-                  accentColor: brightPink,
-                  textTheme: theme.textTheme.copyWith(
-                    headline: _highlightedStyle,
-                    body1: _notHighlightedStyle,
-                  ),
-                ),
-                child: _wholeNumberPicker,
+    return Container(
+      width: T.Spacing.xxlarge,
+      height: T.Spacing.xlarge,
+      decoration: _boxOutline,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Theme(
+            data: theme.copyWith(
+              accentColor: brightPink,
+              textTheme: theme.textTheme.copyWith(
+                headline: _highlightedStyle,
+                body1: _notHighlightedStyle,
               ),
-              _dot,
-              Theme(
-                data: theme.copyWith(
-                  accentColor: brightPink,
-                  textTheme: theme.textTheme.copyWith(
-                    headline: _highlightedStyle,
-                    body1: _notHighlightedStyle,
-                  ),
-                ),
-                child: _decimalNumberPicker,
-              )
-            ],
+            ),
+            child: _wholeNumberPicker,
           ),
-        ),
-      ],
+          _dot,
+          Theme(
+            data: theme.copyWith(
+              accentColor: brightPink,
+              textTheme: theme.textTheme.copyWith(
+                headline: _highlightedStyle,
+                body1: _notHighlightedStyle,
+              ),
+            ),
+            child: _decimalNumberPicker,
+          )
+        ],
+      ),
     );
   }
 
