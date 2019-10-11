@@ -21,6 +21,7 @@ class RandomRunColors {
   static const Color brightPink = const Color(0xFFFF4F4F);
   static const Color lighterPink = const Color(0xFFFF7272);
   static const Color grayPink = const Color(0xFFFAF5F5);
+  static const Color disabled = const Color(0xFFE0E0E0);
 }
 
 class Spacing {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:random_run/bloc/change_unit.dart';
+import 'package:random_run/bloc/picker.dart';
 import 'theme.dart' as Theme;
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,6 +34,9 @@ void main() {
       providers: [
         BlocProvider<ChangeUnitBloc>(
           builder: (context) => ChangeUnitBloc(),
+        ),
+        BlocProvider<PickerBloc>(
+          builder: (context) => PickerBloc(),
         ),
       ],
       child: MainApp(),
