@@ -26,32 +26,25 @@ class FirstScreen extends StatelessWidget {
       ),
       body: BlocBuilder<PickerBloc, PickerState>(
         builder: (context, pickerState) {
-          return Center(
+          return Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
             child: Flex(
               direction: Axis.vertical,
-              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: T.Spacing.medium,
-                    bottom: T.Spacing.medium,
-                  ),
-                  child: Text(
-                    'How far would you like to run?',
-                    style: _howFarStyle,
-                  ),
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Text(
+                  'How far would you like to run?',
+                  style: _howFarStyle,
                 ),
                 Picker(
                   bloc: BlocProvider.of<PickerBloc>(context),
                   pickerValue: pickerState.pickerValue,
                 ),
                 _dropDown,
-                Container(
-                  padding: EdgeInsets.only(
-                    top: T.Spacing.large,
-                  ),
-                  child: NextButton(disabled: pickerState.pickerValue == '0.0'),
+                NextButton(
+                  disabled: pickerState.pickerValue == '0.0',
                 ),
               ],
             ),
