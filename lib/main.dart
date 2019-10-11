@@ -6,6 +6,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:random_run/screens/FirstScreen.dart';
 import 'package:random_run/screens/SecondScreen.dart';
+import 'package:random_run/screens/ThirdScreen.dart';
 
 class SimpleBlocDelegate extends BlocDelegate {
   @override
@@ -57,6 +58,7 @@ class MainApp extends StatelessWidget {
         '/': (context) => FirstScreen(),
         // When navigating to the "/second" route, build the SecondScreen widget.
         '/second': (context) => SecondScreen(),
+        '/third': (context) => ThirdScreen(),
       },
     );
   }
