@@ -21,6 +21,9 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Running the App
 
+Add Google Maps API Key in `ios/Runner/AppDelegate.swift` for iOS and
+`android/app/src/main/AndroidManifest.xml` for Android.
+
 Follow the steps [here](https://flutter.dev/docs/get-started/install)
 Get `flutter doctor` to pass all tests (except having a connected device)
 
