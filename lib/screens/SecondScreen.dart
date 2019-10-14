@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:random_run/theme.dart' as T;
-import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_webservice/directions.dart' as gws;
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:random_run/bloc/picker.dart';
 import 'package:random_run/bloc/change_unit.dart';
 
-class SecondScreen extends StatelessWidget {
-  final Completer<GoogleMapController> _controller = Completer();
+class SecondScreen extends StatefulWidget {
+  @override
+  _SecondScreenState createState() => _SecondScreenState();
+}
 
-  static const LatLng _center = const LatLng(41.8240, -71.4128);
-
-  void _onMapCreated(GoogleMapController controller) {
-    _controller.complete(controller);
-  }
+class _SecondScreenState extends State<SecondScreen> {
+  final directions = gws.GoogleMapsDirections(apiKey: "");
+  gws.DirectionsResponse res;
+  GoogleMapController mapController;
+  //TODO: lat/lng should be user's current location
+  double _lat = 41.828753, _lng = -71.415459;
+  Map<MarkerId, Marker> markers = {};
+  Map<PolylineId, Polyline> polylines = {};
+  List<LatLng> polylineCoordinates = [];
 
   final EdgeInsets _buttonMargins = EdgeInsets.only(
     top: T.Spacing.mediumLarge,
@@ -21,6 +28,20 @@ class SecondScreen extends StatelessWidget {
     left: T.Spacing.smallMedium,
     right: T.Spacing.smallMedium,
   );
+
+  @override
+  void initState() {
+    super.initState();
+
+    _addMarker(LatLng(_lat, _lng), "origin");
+    _getPolylines();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    directions.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +55,13 @@ class SecondScreen extends StatelessWidget {
           return Stack(
             children: <Widget>[
               GoogleMap(
-                onMapCreated: _onMapCreated,
                 initialCameraPosition: CameraPosition(
-                  target: _center,
-                  zoom: 11.0,
+                  target: LatLng(_lat, _lng),
+                  zoom: 15.0,
                 ),
+                onMapCreated: _onMapCreated,
+                markers: Set<Marker>.of(markers.values),
+                polylines: Set<Polyline>.of(polylines.values),
                 myLocationButtonEnabled: false,
               ),
               Flex(
@@ -135,4 +158,51 @@ class SecondScreen extends StatelessWidget {
       );
     },
   );
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  _addMarker(LatLng position, String id) {
+    MarkerId markerId = MarkerId(id);
+    Marker marker = Marker(
+      markerId: markerId,
+      icon: BitmapDescriptor.defaultMarker,
+      position: position,
+    );
+    markers[markerId] = marker;
+  }
+
+  Future<void> _getPolylines() async {
+    res = await directions.directions(
+      gws.Location(_lat, _lng),
+      gws.Location(_lat, _lng),
+      waypoints: [
+        //TODO: pick random waypoints in a random shape?
+        gws.Waypoint.fromLocation(gws.Location(41.826319, -71.412069)),
+        gws.Waypoint.fromLocation(gws.Location(41.828918, -71.412911)),
+      ],
+    );
+
+    if (res.isOkay) {
+      for (var r in res.routes) {
+        List<PointLatLng> points =
+            PolylinePoints().decodePolyline(r.overviewPolyline.points);
+        points.forEach((PointLatLng point) {
+          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        });
+        _addPolyLine();
+      }
+    } else {
+      print(res.errorMessage);
+    }
+  }
+
+  _addPolyLine() {
+    PolylineId id = PolylineId("poly");
+    Polyline polyline = Polyline(
+        polylineId: id, color: Colors.red, points: polylineCoordinates);
+    polylines[id] = polyline;
+    setState(() {});
+  }
 }

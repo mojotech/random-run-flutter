@@ -54,9 +54,7 @@ class MainApp extends StatelessWidget {
       theme: Theme.randomRunThemeData,
       initialRoute: '/',
       routes: {
-        // When navigating to the "/" route, build the FirstScreen widget.
         '/': (context) => FirstScreen(),
-        // When navigating to the "/second" route, build the SecondScreen widget.
         '/second': (context) => SecondScreen(),
         '/third': (context) => ThirdScreen(),
       },
