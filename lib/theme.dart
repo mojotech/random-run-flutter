@@ -27,11 +27,16 @@ class RandomRunColors {
 class Spacing {
   static const double micro = 10.0;
   static const double small = 20.0;
+  static const double smallMedium = 40.0;
   static const double medium = 60.0;
   static const double mediumLarge = 72.0;
   static const double large = 100.0;
   static const double xlarge = 200.0;
   static const double xxlarge = 300.0;
+}
+
+class Sizes {
+  static const double small = 50.0;
 }
 
 class FontSize {
