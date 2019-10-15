@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:random_run/theme.dart' as T;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:random_run/bloc/picker.dart';
 import 'package:random_run/bloc/change_unit.dart';
 import 'package:latlong/latlong.dart' as LatLong;
+import 'package:random_run/utils/unit_conversion.dart';
 
 class SecondScreen extends StatelessWidget {
   @override
@@ -186,21 +188,10 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
   }
 
   Future<void> _getPolylines() async {
-    final LatLong.Distance distance = const LatLong.Distance();
-    // TODO: make this half the inputted distance from the user
-    final num distanceInMeters = 300.0;
-
-    final startingLocation = new LatLong.LatLng(_lat, _lng);
-    // the last parameter of the offset function is the bearing (degrees)
-    final offsetPoint = distance.offset(startingLocation, distanceInMeters, 0);
-
     res = await directions.directions(
       gws.Location(_lat, _lng),
       gws.Location(_lat, _lng),
-      waypoints: [
-        gws.Waypoint.fromLocation(gws.Location(
-            offsetPoint.round().latitude, offsetPoint.round().longitude)),
-      ],
+      waypoints: _getRandomWaypoints(),
     );
 
     if (res.isOkay) {
@@ -223,5 +214,26 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
         polylineId: id, color: Colors.red, points: polylineCoordinates);
     polylines[id] = polyline;
     setState(() {});
+  }
+
+  List<gws.Waypoint> _getRandomWaypoints() {
+    var N = new Random().nextInt(2) + 4;
+    double distanceInMeters =
+        convertDistanceToMeters(widget.distance, widget.unit);
+    double scaledDistance = distanceInMeters / (sqrt(2) * N);
+
+    final List<gws.Waypoint> waypoints = [];
+    final LatLong.Distance distance = const LatLong.Distance();
+    final prevLocation = new LatLong.LatLng(_lat, _lng);
+
+    //TODO: make only starting heading random and change bearing according to interior angle of N-gon
+    for (var i = 1; i < N; i++) {
+      int heading = new Random().nextInt(360);
+      LatLong.LatLng waypoint =
+          distance.offset(prevLocation, scaledDistance, heading);
+      waypoints.add(gws.Waypoint.fromLocation(
+          gws.Location(waypoint.round().latitude, waypoint.round().longitude)));
+    }
+    return waypoints;
   }
 }
