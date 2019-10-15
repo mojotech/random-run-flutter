@@ -51,6 +51,7 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
   Map<MarkerId, Marker> markers = {};
   Map<PolylineId, Polyline> polylines = {};
   List<LatLng> polylineCoordinates = [];
+  String calculatedDistance = '';
 
   final EdgeInsets _buttonMargins = EdgeInsets.only(
     top: T.Spacing.mediumLarge,
@@ -115,7 +116,7 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    widget.distance,
+                    calculatedDistance,
                     style: TextStyle(
                       fontSize: T.FontSize.medium,
                       color: T.RandomRunColors.brightPink,
@@ -203,6 +204,7 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
           polylineCoordinates.add(LatLng(point.latitude, point.longitude));
         });
         _addPolyLine();
+        _calculateDistance(res.routes);
       }
     } else {
       print(res.errorMessage);
@@ -244,5 +246,14 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
           gws.Location(waypoint.round().latitude, waypoint.round().longitude)));
     }
     return waypoints;
+  }
+
+  _calculateDistance(List<gws.Route> routes) {
+    int totalDistance = routes.fold(
+        0,
+        (distance, route) =>
+            distance +
+            route.legs.fold(0, (meters, leg) => meters + leg.distance.value));
+    calculatedDistance = convertMetersToDistance(totalDistance, widget.unit);
   }
 }
