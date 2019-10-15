@@ -8,12 +8,40 @@ import 'package:random_run/bloc/picker.dart';
 import 'package:random_run/bloc/change_unit.dart';
 import 'package:latlong/latlong.dart' as LatLong;
 
-class SecondScreen extends StatefulWidget {
+class SecondScreen extends StatelessWidget {
   @override
-  _SecondScreenState createState() => _SecondScreenState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: T.appBar,
+        backgroundColor: T.RandomRunColors.brightPink,
+      ),
+      body: BlocBuilder<PickerBloc, PickerState>(
+        builder: (_, pickerState) {
+          return BlocBuilder<ChangeUnitBloc, ChangeUnitState>(
+            builder: (_, unitState) {
+              return SecondScreenBody(
+                  distance: pickerState.pickerValue,
+                  unit: unitState.dropdownValue);
+            },
+          );
+        },
+      ),
+    );
+  }
 }
 
-class _SecondScreenState extends State<SecondScreen> {
+class SecondScreenBody extends StatefulWidget {
+  final String distance;
+  final String unit;
+
+  SecondScreenBody({@required this.distance, @required this.unit});
+
+  @override
+  _SecondScreenBodyState createState() => _SecondScreenBodyState();
+}
+
+class _SecondScreenBodyState extends State<SecondScreenBody> {
   final directions = gws.GoogleMapsDirections(apiKey: "");
   gws.DirectionsResponse res;
   GoogleMapController mapController;
@@ -46,119 +74,102 @@ class _SecondScreenState extends State<SecondScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: T.appBar,
-        backgroundColor: T.RandomRunColors.brightPink,
-      ),
-      body: BlocBuilder<PickerBloc, PickerState>(
-        builder: (context, pickerState) {
-          return Stack(
-            children: <Widget>[
-              GoogleMap(
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(_lat, _lng),
-                  zoom: 15.0,
-                ),
-                onMapCreated: _onMapCreated,
-                markers: Set<Marker>.of(markers.values),
-                polylines: Set<Polyline>.of(polylines.values),
-                myLocationButtonEnabled: false,
+    return Stack(
+      children: <Widget>[
+        GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: LatLng(_lat, _lng),
+            zoom: 15.0,
+          ),
+          onMapCreated: _onMapCreated,
+          markers: Set<Marker>.of(markers.values),
+          polylines: Set<Polyline>.of(polylines.values),
+          myLocationButtonEnabled: false,
+        ),
+        Flex(
+          direction: Axis.vertical,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(
+                top: T.Spacing.small,
+                bottom: T.Spacing.small,
+                left: T.Spacing.large,
+                right: T.Spacing.large,
               ),
-              Flex(
-                direction: Axis.vertical,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(
-                      top: T.Spacing.small,
-                      bottom: T.Spacing.small,
-                      left: T.Spacing.large,
-                      right: T.Spacing.large,
-                    ),
-                    padding: EdgeInsets.all(
-                      T.Spacing.micro,
-                    ),
-                    decoration: BoxDecoration(
-                      color: T.RandomRunColors.grayPink,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 5.0,
-                        ),
-                      ],
-                    ),
-                    child: Flex(
-                      direction: Axis.horizontal,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          pickerState.pickerValue,
-                          style: TextStyle(
-                            fontSize: T.FontSize.medium,
-                            color: T.RandomRunColors.brightPink,
-                          ),
-                        ),
-                        _distanceUnit
-                      ],
-                    ),
-                  ),
-                  Flex(
-                    direction: Axis.horizontal,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        margin: _buttonMargins,
-                        height: T.Spacing.mediumLarge,
-                        width: T.Spacing.mediumLarge,
-                        child: FloatingActionButton(
-                          heroTag: "refresh",
-                          onPressed: () => print('refresh button pressed'),
-                          materialTapTargetSize: MaterialTapTargetSize.padded,
-                          backgroundColor: T.RandomRunColors.brightPink,
-                          child: const Icon(Icons.refresh, size: T.Sizes.small),
-                        ),
-                      ),
-                      Container(
-                        margin: _buttonMargins,
-                        height: T.Spacing.mediumLarge,
-                        width: T.Spacing.mediumLarge,
-                        child: FloatingActionButton(
-                          heroTag: "accept",
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/third'),
-                          materialTapTargetSize: MaterialTapTargetSize.padded,
-                          backgroundColor: Colors.green,
-                          child: const Icon(Icons.check, size: T.Sizes.small),
-                        ),
-                      ),
-                    ],
+              padding: EdgeInsets.all(
+                T.Spacing.micro,
+              ),
+              decoration: BoxDecoration(
+                color: T.RandomRunColors.grayPink,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 5.0,
                   ),
                 ],
               ),
-            ],
-          );
-        },
-      ),
+              child: Flex(
+                direction: Axis.horizontal,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    widget.distance,
+                    style: TextStyle(
+                      fontSize: T.FontSize.medium,
+                      color: T.RandomRunColors.brightPink,
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      left: T.Spacing.micro,
+                    ),
+                    child: Text(
+                      widget.unit,
+                      style: TextStyle(
+                        fontSize: T.FontSize.medium,
+                        color: T.RandomRunColors.brightPink,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Flex(
+              direction: Axis.horizontal,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Container(
+                  margin: _buttonMargins,
+                  height: T.Spacing.mediumLarge,
+                  width: T.Spacing.mediumLarge,
+                  child: FloatingActionButton(
+                    heroTag: "refresh",
+                    onPressed: () => print('refresh button pressed'),
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    backgroundColor: T.RandomRunColors.brightPink,
+                    child: const Icon(Icons.refresh, size: T.Sizes.small),
+                  ),
+                ),
+                Container(
+                  margin: _buttonMargins,
+                  height: T.Spacing.mediumLarge,
+                  width: T.Spacing.mediumLarge,
+                  child: FloatingActionButton(
+                    heroTag: "accept",
+                    onPressed: () => Navigator.pushNamed(context, '/third'),
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    backgroundColor: Colors.green,
+                    child: const Icon(Icons.check, size: T.Sizes.small),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
     );
   }
-
-  final Widget _distanceUnit = BlocBuilder<ChangeUnitBloc, ChangeUnitState>(
-    builder: (context, state) {
-      return Container(
-        margin: EdgeInsets.only(
-          left: T.Spacing.micro,
-        ),
-        child: Text(
-          state.dropdownValue,
-          style: TextStyle(
-            fontSize: T.FontSize.medium,
-            color: T.RandomRunColors.brightPink,
-          ),
-        ),
-      );
-    },
-  );
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
