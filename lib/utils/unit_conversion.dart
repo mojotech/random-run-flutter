@@ -7,3 +7,11 @@ double convertDistanceToMeters(String distanceStr, String unit) {
     return dist / 0.00062137;
   }
 }
+
+String convertMetersToDistance(int meters, String unit) {
+  if (unit == "kilometers") {
+    return (meters / 1000).toStringAsFixed(1);
+  } else {
+    return (meters * 0.00062137).toStringAsFixed(1);
+  }
+}
