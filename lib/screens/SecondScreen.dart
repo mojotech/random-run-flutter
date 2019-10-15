@@ -191,6 +191,7 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
       gws.Location(_lat, _lng),
       gws.Location(_lat, _lng),
       waypoints: _getRandomWaypoints(),
+      travelMode: gws.TravelMode.walking,
     );
 
     if (res.isOkay) {
@@ -217,20 +218,28 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
   }
 
   List<gws.Waypoint> _getRandomWaypoints() {
-    var N = new Random().nextInt(2) + 4;
+    final List<gws.Waypoint> waypoints = [];
+
+    var N = new Random().nextInt(6) + 4;
     double distanceInMeters =
         convertDistanceToMeters(widget.distance, widget.unit);
-    double scaledDistance = distanceInMeters / (sqrt(2) * N);
+    int scaledRadiusInMeters =
+        ((distanceInMeters / (2 * pi)) / sqrt(2)).round();
 
-    final List<gws.Waypoint> waypoints = [];
     final LatLong.Distance distance = const LatLong.Distance();
-    final prevLocation = new LatLong.LatLng(_lat, _lng);
+    int initialHeading = new Random().nextInt(360);
 
-    //TODO: make only starting heading random and change bearing according to interior angle of N-gon
+    LatLong.LatLng center = distance.offset(
+      LatLong.LatLng(_lat, _lng),
+      scaledRadiusInMeters,
+      initialHeading,
+    );
+
     for (var i = 1; i < N; i++) {
-      int heading = new Random().nextInt(360);
+      int newHeading =
+          ((((initialHeading + 180) % 360) + (360 / N) * i) % 360).round();
       LatLong.LatLng waypoint =
-          distance.offset(prevLocation, scaledDistance, heading);
+          distance.offset(center, scaledRadiusInMeters, newHeading);
       waypoints.add(gws.Waypoint.fromLocation(
           gws.Location(waypoint.round().latitude, waypoint.round().longitude)));
     }
