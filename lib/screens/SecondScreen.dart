@@ -45,7 +45,6 @@ class SecondScreenBody extends StatefulWidget {
 
 class _SecondScreenBodyState extends State<SecondScreenBody> {
   final directions = gws.GoogleMapsDirections(apiKey: "");
-  gws.DirectionsResponse res;
   GoogleMapController mapController;
   //TODO: lat/lng should be user's current location
   double _lat = 41.822740, _lng = -71.412500;
@@ -147,7 +146,7 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
                   width: T.Spacing.mediumLarge,
                   child: FloatingActionButton(
                     heroTag: "refresh",
-                    onPressed: () => print('refresh button pressed'),
+                    onPressed: () => _getPolylines(),
                     materialTapTargetSize: MaterialTapTargetSize.padded,
                     backgroundColor: T.RandomRunColors.brightPink,
                     child: const Icon(Icons.refresh, size: T.Sizes.small),
@@ -188,7 +187,7 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
   }
 
   Future<void> _getPolylines() async {
-    res = await directions.directions(
+    gws.DirectionsResponse res = await directions.directions(
       gws.Location(_lat, _lng),
       gws.Location(_lat, _lng),
       waypoints: _getRandomWaypoints(),
@@ -198,6 +197,7 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
       for (var r in res.routes) {
         List<PointLatLng> points =
             PolylinePoints().decodePolyline(r.overviewPolyline.points);
+        polylineCoordinates.clear();
         points.forEach((PointLatLng point) {
           polylineCoordinates.add(LatLng(point.latitude, point.longitude));
         });
