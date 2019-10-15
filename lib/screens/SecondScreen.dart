@@ -6,6 +6,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:random_run/bloc/picker.dart';
 import 'package:random_run/bloc/change_unit.dart';
+import 'package:latlong/latlong.dart' as LatLong;
 
 class SecondScreen extends StatefulWidget {
   @override
@@ -17,7 +18,7 @@ class _SecondScreenState extends State<SecondScreen> {
   gws.DirectionsResponse res;
   GoogleMapController mapController;
   //TODO: lat/lng should be user's current location
-  double _lat = 41.828753, _lng = -71.415459;
+  double _lat = 41.822740, _lng = -71.412500;
   Map<MarkerId, Marker> markers = {};
   Map<PolylineId, Polyline> polylines = {};
   List<LatLng> polylineCoordinates = [];
@@ -174,13 +175,20 @@ class _SecondScreenState extends State<SecondScreen> {
   }
 
   Future<void> _getPolylines() async {
+    final LatLong.Distance distance = const LatLong.Distance();
+    // TODO: make this half the inputted distance from the user
+    final num distanceInMeters = 300.0;
+
+    final startingLocation = new LatLong.LatLng(_lat, _lng);
+    // the last parameter of the offset function is the bearing (degrees)
+    final offsetPoint = distance.offset(startingLocation, distanceInMeters, 0);
+
     res = await directions.directions(
       gws.Location(_lat, _lng),
       gws.Location(_lat, _lng),
       waypoints: [
-        //TODO: pick random waypoints in a random shape?
-        gws.Waypoint.fromLocation(gws.Location(41.826319, -71.412069)),
-        gws.Waypoint.fromLocation(gws.Location(41.828918, -71.412911)),
+        gws.Waypoint.fromLocation(gws.Location(
+            offsetPoint.round().latitude, offsetPoint.round().longitude)),
       ],
     );
 
