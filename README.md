@@ -21,8 +21,11 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Running the App
 
-Add Google Maps API Key in `ios/Runner/AppDelegate.swift` for iOS and
-`android/app/src/main/AndroidManifest.xml` for Android.
+```
+cp .env.sample .env
+```
+
+Add Google Maps API Key to .env.
 
 Follow the steps [here](https://flutter.dev/docs/get-started/install)
 Get `flutter doctor` to pass all tests (except having a connected device)
@@ -30,4 +33,4 @@ Get `flutter doctor` to pass all tests (except having a connected device)
 For iOS:
 Open the iOS simulator: `open -a Simulator`
 Upgrade Google Maps: navigate to the `ios` folder and run `pod update`
-Run the app: `flutter run` from inside the root directory
+Run the app: `./dotenv.sh flutter run` from inside the root directory
