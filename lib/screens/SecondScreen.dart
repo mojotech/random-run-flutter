@@ -151,7 +151,7 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
                     width: T.Spacing.mediumLarge,
                     child: FloatingActionButton(
                       heroTag: "refresh",
-                      onPressed: () => print('refresh button pressed'),
+                      onPressed: () => _getPolylines(),
                       materialTapTargetSize: MaterialTapTargetSize.padded,
                       backgroundColor: T.RandomRunColors.brightPink,
                       child: const Icon(Icons.refresh, size: T.Sizes.small),
