@@ -9,6 +9,7 @@ import 'package:random_run/bloc/picker.dart';
 import 'package:random_run/bloc/change_unit.dart';
 import 'package:latlong/latlong.dart' as LatLong;
 import 'package:random_run/utils/unit_conversion.dart';
+import 'package:geolocator/geolocator.dart';
 
 class SecondScreen extends StatelessWidget {
   @override
@@ -23,8 +24,9 @@ class SecondScreen extends StatelessWidget {
           return BlocBuilder<ChangeUnitBloc, ChangeUnitState>(
             builder: (_, unitState) {
               return SecondScreenBody(
-                  distance: pickerState.pickerValue,
-                  unit: unitState.dropdownValue);
+                distance: pickerState.pickerValue,
+                unit: unitState.dropdownValue,
+              );
             },
           );
         },
@@ -46,12 +48,13 @@ class SecondScreenBody extends StatefulWidget {
 class _SecondScreenBodyState extends State<SecondScreenBody> {
   final directions = gws.GoogleMapsDirections(apiKey: "");
   GoogleMapController mapController;
-  //TODO: lat/lng should be user's current location
-  double _lat = 41.822740, _lng = -71.412500;
+  double _lat;
+  double _lng;
   Map<MarkerId, Marker> markers = {};
   Map<PolylineId, Polyline> polylines = {};
   List<LatLng> polylineCoordinates = [];
   String calculatedDistance = '';
+  Position _currentPosition;
 
   final EdgeInsets _buttonMargins = EdgeInsets.only(
     top: T.Spacing.mediumLarge,
@@ -63,9 +66,7 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
   @override
   void initState() {
     super.initState();
-
-    _addMarker(LatLng(_lat, _lng), "origin");
-    _getPolylines();
+    _asyncInitState();
   }
 
   @override
@@ -76,105 +77,134 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: LatLng(_lat, _lng),
-            zoom: 15.0,
+    if (_lat != null && _lng != null) {
+      return Stack(
+        children: <Widget>[
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: LatLng(_lat, _lng),
+              zoom: 15.0,
+            ),
+            onMapCreated: _onMapCreated,
+            markers: Set<Marker>.of(markers.values),
+            polylines: Set<Polyline>.of(polylines.values),
+            myLocationButtonEnabled: false,
           ),
-          onMapCreated: _onMapCreated,
-          markers: Set<Marker>.of(markers.values),
-          polylines: Set<Polyline>.of(polylines.values),
-          myLocationButtonEnabled: false,
-        ),
-        Flex(
-          direction: Axis.vertical,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(
-                top: T.Spacing.small,
-                bottom: T.Spacing.small,
-                left: T.Spacing.large,
-                right: T.Spacing.large,
-              ),
-              padding: EdgeInsets.all(
-                T.Spacing.micro,
-              ),
-              decoration: BoxDecoration(
-                color: T.RandomRunColors.grayPink,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 5.0,
-                  ),
-                ],
-              ),
-              child: Flex(
-                direction: Axis.horizontal,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    calculatedDistance,
-                    style: TextStyle(
-                      fontSize: T.FontSize.medium,
-                      color: T.RandomRunColors.brightPink,
+          Flex(
+            direction: Axis.vertical,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(
+                  top: T.Spacing.small,
+                  bottom: T.Spacing.small,
+                  left: T.Spacing.large,
+                  right: T.Spacing.large,
+                ),
+                padding: EdgeInsets.all(
+                  T.Spacing.micro,
+                ),
+                decoration: BoxDecoration(
+                  color: T.RandomRunColors.grayPink,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 5.0,
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: T.Spacing.micro,
-                    ),
-                    child: Text(
-                      widget.unit,
+                  ],
+                ),
+                child: Flex(
+                  direction: Axis.horizontal,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      calculatedDistance,
                       style: TextStyle(
                         fontSize: T.FontSize.medium,
                         color: T.RandomRunColors.brightPink,
                       ),
                     ),
-                  )
+                    Container(
+                      margin: EdgeInsets.only(
+                        left: T.Spacing.micro,
+                      ),
+                      child: Text(
+                        widget.unit,
+                        style: TextStyle(
+                          fontSize: T.FontSize.medium,
+                          color: T.RandomRunColors.brightPink,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Flex(
+                direction: Axis.horizontal,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    margin: _buttonMargins,
+                    height: T.Spacing.mediumLarge,
+                    width: T.Spacing.mediumLarge,
+                    child: FloatingActionButton(
+                      heroTag: "refresh",
+                      onPressed: () => print('refresh button pressed'),
+                      materialTapTargetSize: MaterialTapTargetSize.padded,
+                      backgroundColor: T.RandomRunColors.brightPink,
+                      child: const Icon(Icons.refresh, size: T.Sizes.small),
+                    ),
+                  ),
+                  Container(
+                    margin: _buttonMargins,
+                    height: T.Spacing.mediumLarge,
+                    width: T.Spacing.mediumLarge,
+                    child: FloatingActionButton(
+                      heroTag: "accept",
+                      onPressed: () => Navigator.pushNamed(context, '/third'),
+                      materialTapTargetSize: MaterialTapTargetSize.padded,
+                      backgroundColor: Colors.green,
+                      child: const Icon(Icons.check, size: T.Sizes.small),
+                    ),
+                  ),
                 ],
               ),
-            ),
-            Flex(
-              direction: Axis.horizontal,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  margin: _buttonMargins,
-                  height: T.Spacing.mediumLarge,
-                  width: T.Spacing.mediumLarge,
-                  child: FloatingActionButton(
-                    heroTag: "refresh",
-                    onPressed: () => _getPolylines(),
-                    materialTapTargetSize: MaterialTapTargetSize.padded,
-                    backgroundColor: T.RandomRunColors.brightPink,
-                    child: const Icon(Icons.refresh, size: T.Sizes.small),
-                  ),
-                ),
-                Container(
-                  margin: _buttonMargins,
-                  height: T.Spacing.mediumLarge,
-                  width: T.Spacing.mediumLarge,
-                  child: FloatingActionButton(
-                    heroTag: "accept",
-                    onPressed: () => Navigator.pushNamed(context, '/third'),
-                    materialTapTargetSize: MaterialTapTargetSize.padded,
-                    backgroundColor: Colors.green,
-                    child: const Icon(Icons.check, size: T.Sizes.small),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
+            ],
+          ),
+        ],
+      );
+    } else {
+      return Container();
+    }
   }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+  }
+
+  Future<void> _asyncInitState() async {
+    await _getCurrentLocation();
+    if (_currentPosition != null) {
+      setState(() {
+        _lat = _currentPosition.latitude;
+        _lng = _currentPosition.longitude;
+      });
+      _addMarker(LatLng(_lat, _lng), "origin");
+      _getPolylines();
+    }
+  }
+
+  Future<void> _getCurrentLocation() async {
+    Geolocator geolocator = Geolocator()..forceAndroidLocationManager = true;
+    GeolocationStatus geolocationStatus =
+        await geolocator.checkGeolocationPermissionStatus();
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    if (geolocationStatus == GeolocationStatus.granted) {
+      setState(() {
+        _currentPosition = position;
+      });
+    }
   }
 
   _addMarker(LatLng position, String id) {

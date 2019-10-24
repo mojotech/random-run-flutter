@@ -27,6 +27,7 @@ dependencies:
   equatable: ^0.2.0
   flutter_bloc: ^0.21.0
   latlong: ^0.6.1
+  geolocator: ^5.1.4+1
 
 dev_dependencies:
   flutter_test:
