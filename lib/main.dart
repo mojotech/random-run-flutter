@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:random_run/screens/FirstScreen.dart';
 import 'package:random_run/screens/SecondScreen.dart';
 import 'package:random_run/screens/ThirdScreen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SimpleBlocDelegate extends BlocDelegate {
   @override
@@ -28,7 +29,8 @@ class SimpleBlocDelegate extends BlocDelegate {
   }
 }
 
-void main() {
+Future main() async {
+  await DotEnv().load('.env');
   BlocSupervisor.delegate = SimpleBlocDelegate();
   runApp(
     MultiBlocProvider(

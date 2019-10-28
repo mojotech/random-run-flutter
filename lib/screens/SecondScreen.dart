@@ -10,6 +10,7 @@ import 'package:random_run/bloc/change_unit.dart';
 import 'package:latlong/latlong.dart' as LatLong;
 import 'package:random_run/utils/unit_conversion.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SecondScreen extends StatelessWidget {
   @override
@@ -46,7 +47,8 @@ class SecondScreenBody extends StatefulWidget {
 }
 
 class _SecondScreenBodyState extends State<SecondScreenBody> {
-  final directions = gws.GoogleMapsDirections(apiKey: "");
+  final directions =
+      gws.GoogleMapsDirections(apiKey: DotEnv().env['GOOGLE_MAPS_API_KEY']);
   GoogleMapController mapController;
   double _lat;
   double _lng;
@@ -149,7 +151,7 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
                     width: T.Spacing.mediumLarge,
                     child: FloatingActionButton(
                       heroTag: "refresh",
-                      onPressed: () => print('refresh button pressed'),
+                      onPressed: () => _getPolylines(),
                       materialTapTargetSize: MaterialTapTargetSize.padded,
                       backgroundColor: T.RandomRunColors.brightPink,
                       child: const Icon(Icons.refresh, size: T.Sizes.small),
