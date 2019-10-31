@@ -246,7 +246,11 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
   _addPolyLine() {
     PolylineId id = PolylineId("poly");
     Polyline polyline = Polyline(
-        polylineId: id, color: Colors.red, points: polylineCoordinates);
+      polylineId: id,
+      color: T.RandomRunColors.brightPink,
+      width: 7,
+      points: polylineCoordinates,
+    );
     polylines[id] = polyline;
     setState(() {});
   }
