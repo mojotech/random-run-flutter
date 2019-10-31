@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:random_run/theme.dart' as T;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -49,7 +50,7 @@ class SecondScreenBody extends StatefulWidget {
 class _SecondScreenBodyState extends State<SecondScreenBody> {
   final directions =
       gws.GoogleMapsDirections(apiKey: DotEnv().env['GOOGLE_MAPS_API_KEY']);
-  GoogleMapController mapController;
+  Completer<GoogleMapController> mapController = Completer();
   double _lat;
   double _lng;
   Map<MarkerId, Marker> markers = {};
@@ -181,7 +182,7 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
   }
 
   void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
+    mapController.complete(controller);
   }
 
   Future<void> _asyncInitState() async {
@@ -192,7 +193,8 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
         _lng = _currentPosition.longitude;
       });
       _addMarker(LatLng(_lat, _lng), "origin");
-      _getPolylines();
+      await _getPolylines();
+      await _zoomToFitRoute(polylineCoordinates);
     }
   }
 
@@ -291,5 +293,31 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
             distance +
             route.legs.fold(0, (meters, leg) => meters + leg.distance.value));
     calculatedDistance = convertMetersToDistance(totalDistance, widget.unit);
+  }
+
+  LatLngBounds boundsFromLatLngList(List<LatLng> list) {
+    assert(list.isNotEmpty);
+    double x0, x1, y0, y1;
+    for (LatLng latLng in list) {
+      if (x0 == null) {
+        x0 = x1 = latLng.latitude;
+        y0 = y1 = latLng.longitude;
+      } else {
+        if (latLng.latitude > x1) x1 = latLng.latitude;
+        if (latLng.latitude < x0) x0 = latLng.latitude;
+        if (latLng.longitude > y1) y1 = latLng.longitude;
+        if (latLng.longitude < y0) y0 = latLng.longitude;
+      }
+    }
+    return LatLngBounds(northeast: LatLng(x1, y1), southwest: LatLng(x0, y0));
+  }
+
+  Future<void> _zoomToFitRoute(List<LatLng> randomWaypoints) async {
+    if (randomWaypoints != null) {
+      final GoogleMapController controller = await mapController.future;
+      LatLngBounds bounds = boundsFromLatLngList(randomWaypoints);
+      double padding = 20.0;
+      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, padding));
+    }
   }
 }
