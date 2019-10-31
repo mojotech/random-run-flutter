@@ -97,50 +97,72 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
             direction: Axis.vertical,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(
-                  top: T.Spacing.small,
-                  bottom: T.Spacing.small,
-                  left: T.Spacing.large,
-                  right: T.Spacing.large,
-                ),
-                padding: EdgeInsets.all(
-                  T.Spacing.micro,
-                ),
-                decoration: BoxDecoration(
-                  color: T.RandomRunColors.grayPink,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 5.0,
+              Flex(
+                direction: Axis.horizontal,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: T.Spacing.small,
+                      bottom: T.Spacing.small,
+                      left: T.Spacing.large,
                     ),
-                  ],
-                ),
-                child: Flex(
-                  direction: Axis.horizontal,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      calculatedDistance,
-                      style: TextStyle(
-                        fontSize: T.FontSize.medium,
-                        color: T.RandomRunColors.brightPink,
-                      ),
+                    padding: EdgeInsets.all(
+                      T.Spacing.micro,
                     ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        left: T.Spacing.micro,
-                      ),
-                      child: Text(
-                        widget.unit,
-                        style: TextStyle(
-                          fontSize: T.FontSize.medium,
-                          color: T.RandomRunColors.brightPink,
+                    decoration: BoxDecoration(
+                      color: T.RandomRunColors.grayPink,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 5.0,
                         ),
+                      ],
+                    ),
+                    child: Flex(
+                      direction: Axis.horizontal,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          calculatedDistance,
+                          style: TextStyle(
+                            fontSize: T.FontSize.medium,
+                            color: T.RandomRunColors.brightPink,
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                            left: T.Spacing.micro,
+                          ),
+                          child: Text(
+                            widget.unit,
+                            style: TextStyle(
+                              fontSize: T.FontSize.medium,
+                              color: T.RandomRunColors.brightPink,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      right: T.Spacing.small,
+                    ),
+                    alignment: Alignment.topRight,
+                    height: T.Spacing.smallMedium,
+                    width: T.Spacing.smallMedium,
+                    child: FloatingActionButton(
+                      heroTag: "center",
+                      onPressed: () => _zoomToFitRoute(polylineCoordinates),
+                      backgroundColor: Colors.blue,
+                      child: const Icon(
+                        Icons.my_location,
+                        size: T.Sizes.xsmall,
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  ),
+                ],
               ),
               Flex(
                 direction: Axis.horizontal,
@@ -155,7 +177,10 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
                       onPressed: () => _getPolylines(),
                       materialTapTargetSize: MaterialTapTargetSize.padded,
                       backgroundColor: T.RandomRunColors.brightPink,
-                      child: const Icon(Icons.refresh, size: T.Sizes.small),
+                      child: const Icon(
+                        Icons.refresh,
+                        size: T.Sizes.small,
+                      ),
                     ),
                   ),
                   Container(
@@ -167,7 +192,10 @@ class _SecondScreenBodyState extends State<SecondScreenBody> {
                       onPressed: () => Navigator.pushNamed(context, '/third'),
                       materialTapTargetSize: MaterialTapTargetSize.padded,
                       backgroundColor: Colors.green,
-                      child: const Icon(Icons.check, size: T.Sizes.small),
+                      child: const Icon(
+                        Icons.check,
+                        size: T.Sizes.small,
+                      ),
                     ),
                   ),
                 ],

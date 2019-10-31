@@ -36,6 +36,7 @@ class Spacing {
 }
 
 class Sizes {
+  static const double xsmall = 30.0;
   static const double small = 50.0;
 }
 
